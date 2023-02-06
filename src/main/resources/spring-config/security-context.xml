@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 접근 거부 핸들러 빈 -->
+	<bean id="accessDeniedHanlder" class="com.jafa.security.MemberAccessDeniedHanlder"/>
+	
+	<!-- 로그인 실패 핸들러 빈 -->
+	<bean id="loginFailureHandler" class="com.jafa.security.LoginFailureHandler">
+		<property name="defaultFailureUrl" value="/member/login"/>
+	</bean>
+	
+	<!-- 로그인 성공 핸들러 빈 -->
+	<bean id="loginSucessHandler" class="com.jafa.security.LoginSucessHandler"/>
+	
+	<!-- 로그아웃 성공 핸들러 빈 -->
+	<bean id="logoutSuccessHandler" class="com.jafa.security.LogoutSuccessHandlerImpl"/>
+	
+	<security:http>
+		<!-- 로그인 페이지  -->
+		<security:form-login login-page="/member/login"
+			login-processing-url="/member/login"
+			authentication-failure-handler-ref="loginFailureHandler"
+			username-parameter="loginId"
+			password-parameter="loginPwd"/>
+		
+		<!-- 로그 아웃 처리 -->
+		<security:logout invalidate-session="true" logout-url="/member/logout"/>
+		
+		<!-- 접근 제한 설정 -->
+		<security:intercept-url pattern="/member/all" access="permitAll"/>
+		<security:intercept-url pattern="/member/member" access="hasRole('ROLE_MEMBER')"/>
+		<security:intercept-url pattern="/member/admin" access="hasRole('ROLE_ADMIN')"/>
+		
+		<!-- 접근 거부 처리 -->
+		<security:access-denied-handler ref="accessDeniedHanlder"/>
+		
+	</security:http>
+	
+	<security:authentication-manager>
+	<!-- 인증과 권한에 대한 처리 -->
+		<security:authentication-provider>
+			<security:user-service> <!-- 사용자 등록 -->
+				<security:user name="leejaedong" password="{noop}1234" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}1234" authorities="ROLE_ADMIN,ROLE_MEMBER"/>
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+
+</beans>
