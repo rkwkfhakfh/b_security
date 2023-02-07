@@ -36,9 +36,10 @@ public class LoginFailureHandler implements AuthenticationFailureHandler{
 			errorMessage = "아이디 또는 비밀번호가 일치 하지 않습니다.";
 		} else {
 			errorMessage = "알수없는 오류입니다. 관리자에게 문의하십시오."; 
-		}
+		} 
 		request.setAttribute("errorMessage", errorMessage);
 		request.setAttribute("loginId", loginId);
 		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);
+		
 	}
 }
